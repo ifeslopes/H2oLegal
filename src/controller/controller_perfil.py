@@ -31,6 +31,10 @@ class Controller_Perfil:
             # Exibe os atributos do novo perfil
             print(novo_perfil.to_string())
             # Retorna o objeto novo_perfil para utilização posterior, caso necessário
+            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃo: ")
+            if continue_resgristrando =="s":
+                self.inserir_perfil()
+
             return novo_perfil
         else:
             print(f"O Perfil {nome} já está cadastrado.")
@@ -61,6 +65,11 @@ class Controller_Perfil:
             # Exibe os atributos do novo perfil
             print(perfil_atualizado.to_string())
             # Retorna o objeto perfil_atualizado para utilização posterior, caso necessário
+
+            continue_resgristrando =input("Deseja continuar atualizando regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.atualizar_perfil()
+
             return perfil_atualizado
         else:
             print(f"O nome do perfil {novo_nome} não existe.")
@@ -88,6 +97,11 @@ class Controller_Perfil:
             # Exibe os atributos do perfil excluído
             print("perfil Removido com Sucesso!")
             print(perfil_excluido.to_string())
+
+            continue_resgristrando =input("Deseja continuar removendo ? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.excluir_perfil()
+
         else:
             print(f"O Perfil {nome} não existe.")
 

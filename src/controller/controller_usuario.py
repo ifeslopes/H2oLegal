@@ -50,6 +50,9 @@ class Controller_Usuario:
             # Exibe os atributos do novo usuário
             print(novo_usuario.to_string())
             # Retorna o objeto novo_usuario para utilização posterior, caso necessário
+            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.inserir_usuario()
             return novo_usuario
         else:
             print(f"O email {email} já está cadastrado.")
@@ -97,6 +100,9 @@ class Controller_Usuario:
             # Exibe os atributos do novo usuário
             print(usuario_atualizado.to_string())
             # Retorna o objeto usuario_atualizado para utilização posterior, caso necessário
+            continue_resgristrando =input("Deseja continuar atualizando os regristos? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.atualizar_usuario()
             return usuario_atualizado
         else:
             print(f"O email {email} não existe.")
@@ -116,6 +122,9 @@ class Controller_Usuario:
             oracle.write(f"delete from usuario where email = '{email}'")
             # Exibe uma mensagem informando que o usuário foi removido
             print(f"Usuário com email {email} removido com sucesso!")
+            continue_resgristrando =input("Deseja continuar excluindo os regristos? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.excluir_usuario()
         else:
             print(f"O email {email} não existe.")
 

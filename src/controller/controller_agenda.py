@@ -1,3 +1,5 @@
+import os
+from time import sleep
 from model.usuario import Usuario
 from model.agenda import Agenda
 from conexion.oracle_queries import OracleQueries
@@ -44,13 +46,22 @@ class Controller_Agenda:
             # Exibe os atributos do novo usuário
             print(nova_agenda.to_string())
 
+            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.inserir_agenda()
+
             #Retorna o objeto novo_usuario para utilização posterior, caso necessário
             return  nova_agenda
         else:
             print(f"O usuario não completou quantidade água indicada")
+         
             return None
 
-    def atualizar_usuario(self) -> Usuario:
+    def atualizar_agenda(self) -> Usuario:
+        
+        print(" EM DESEVOLVIMENTO... ")
+        sleep(3)
+        return None
         # Cria uma nova conexão com o banco que permite alteração
         oracle = OracleQueries(can_write=True)
         oracle.connect()
@@ -92,6 +103,12 @@ class Controller_Agenda:
             # Exibe os atributos do novo usuário
             print(usuario_atualizado.to_string())
             # Retorna o objeto usuario_atualizado para utilização posterior, caso necessário
+
+          
+            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.atualizar_agenda()
+
             return usuario_atualizado
         else:
             print(f"O usario não existe.")
@@ -111,6 +128,10 @@ class Controller_Agenda:
             oracle.write(f"delete from agenda where codigo_agenda = {id}")
             # Exibe uma mensagem informando que o usuário foi removido
             print(f"Agendamento do código {id} removido com sucesso!")
+
+            continue_resgristrando =input("Deseja continuar ecluindo os regristos? s /SIM - n /NÃO: ")
+            if continue_resgristrando =="s":
+                self.excluir_agenda()
         else:
             print(f"O agendamentop do código {id} não existe.")
 
