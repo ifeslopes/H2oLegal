@@ -16,7 +16,7 @@ class Controller_Perfil:
         # Solicita ao usuario o novo porcentagem
         nome = str(input("Perfil (Novo): "))
 
-        if self.verifica_existencia_perfil(oracle, nome):
+        if self.verifica_existencia_perfil_nome(oracle, nome):
             # Solicita ao usuario o novo nome
             porcentagem = input("Porcetagem (Novo): ")
             # Insere e persiste o novo perfil
@@ -51,7 +51,7 @@ class Controller_Perfil:
             input("Nome do perfil que deseja alterar o nome: "))
 
         # Verifica se o perfil existe na base de dados
-        if not self.verifica_existencia_perfil(oracle, nome):
+        if not self.verifica_existencia_perfil_nome(oracle, nome):
             novo_nome = str(
                 input("Nome do Novo perfil que deseja alterar o nome: "))
             porcentagem = float(input("Porcetagem (Atuallizar): "))
@@ -117,14 +117,20 @@ class Controller_Perfil:
         else:
             print(f"O Perfil {codigo} não existe.")
 
-    def verifica_existencia_perfil(self, oracle: OracleQueries, codigo: int = None) -> bool:
+    def verifica_existencia_perfil(self, oracle: OracleQueries, codigo: str = None) -> bool:
         # Recupera os dados do novo perfil criado transformando em um DataFrame
         df_perfil = oracle.sqlToDataFrame(
-            f"select descricao_perfil, porcentagem_perfil from perfils where codigo_perfil = '{codigo}'")
+            f"select descricao_perfil, porcentagem_perfil from perfils where codigo_perfil = '{codigo}' or descricao_perfil ='{codigo}'")
         return df_perfil.empty
 
     def verifica_existencia_relacionamendo_com_perfil(self, oracle: OracleQueries, codigo: int = None) -> bool:
         # Recupera os dados do novo perfil criado transformando em um DataFrame
         df_perfil = oracle.sqlToDataFrame(
             f"SELECT nome, email FROM usuario WHERE codigo_perfil = {codigo}")
+        return df_perfil.empty
+    
+    def verifica_existencia_perfil_nome(self, oracle: OracleQueries, codigo: str = None) -> bool:
+        # Recupera os dados do novo perfil criado transformando em um DataFrame
+        df_perfil = oracle.sqlToDataFrame(
+            f"select descricao_perfil, porcentagem_perfil from perfils where descricao_perfil ='{codigo}'")
         return df_perfil.empty

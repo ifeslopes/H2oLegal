@@ -16,7 +16,7 @@ class Controller_Usuario:
         # Solicita o novo email
         email = input("Email (Novo): ")
 
-        if self.verifica_existencia_usuario(oracle, email):
+        if self.verifica_existencia_usuario_email(oracle, email):
             # Solicita o nome de usuário
             nome = input("Nome de Usuário (Novo): ")
             # Solicita a idade
@@ -69,7 +69,7 @@ class Controller_Usuario:
         email = input("Email do usuário que deseja alterar: ")
 
         # Verifica se o usuário existe na base de dados
-        if not self.verifica_existencia_usuario(oracle, email):
+        if not self.verifica_existencia_usuario_email(oracle, email):
             # Solicita o novo nome
             novo_nome = input("Nome (Novo): ")
             # Solicita a nova idade
@@ -148,6 +148,12 @@ class Controller_Usuario:
         # Recupera os dados do usuário criado transformando em um DataFrame
         df_usuario = oracle.sqlToDataFrame(
             f"select email, nome from usuario where codigo_usuario = '{codigo}'")
+        return df_usuario.empty
+
+    def verifica_existencia_usuario_email(self, oracle: OracleQueries, email: str = None) -> bool:
+        # Recupera os dados do usuário criado transformando em um DataFrame
+        df_usuario = oracle.sqlToDataFrame(
+            f"select email, nome from usuario where email = '{email}'")
         return df_usuario.empty
 
     def verifica_existencia_relacionamendo_com_usuario(self, oracle: OracleQueries, codigo: int = None) -> bool:
