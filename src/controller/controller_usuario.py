@@ -21,7 +21,7 @@ class Controller_Usuario:
             nome = input("Nome de Usuário (Novo): ")
             # Solicita a idade
             idade_usuario = float(input("Idade (Novo): "))
-            
+
             # Solicita a altura
             altura_usuario = float(input("Altura (Novo): "))
             # Solicita o peso
@@ -32,9 +32,9 @@ class Controller_Usuario:
             # Solicita o código do perfil
             codigo_perfil = int(input("Código do Perfil (Novo): "))
 
-            
             # Insere e persiste o novo usuário
-            oracle.write(f"insert into usuario values (USUARIO_CODIGO_SEQ.NEXTVAL,'{nome}','{email}', {idade_usuario}, {altura_usuario}, {peso_usuario}, {codigo_perfil})")
+            oracle.write(
+                f"insert into usuario values (USUARIO_CODIGO_SEQ.NEXTVAL,'{nome}','{email}', {idade_usuario}, {altura_usuario}, {peso_usuario}, {codigo_perfil})")
             # Recupera os dados do novo usuário criado transformando em um DataFrame
             df_usuario = oracle.sqlToDataFrame(
                 f"select email, nome, idade_usuario, altura_usuario, peso_usuario, codigo_perfil from usuario where email = '{email}'")
@@ -50,8 +50,9 @@ class Controller_Usuario:
             # Exibe os atributos do novo usuário
             print(novo_usuario.to_string())
             # Retorna o objeto novo_usuario para utilização posterior, caso necessário
-            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando == "s":
                 self.inserir_usuario()
             return novo_usuario
         else:
@@ -100,8 +101,9 @@ class Controller_Usuario:
             # Exibe os atributos do novo usuário
             print(usuario_atualizado.to_string())
             # Retorna o objeto usuario_atualizado para utilização posterior, caso necessário
-            continue_resgristrando =input("Deseja continuar atualizando os regristos? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar atualizando os regristos? s /SIM - n /NÃO: ")
+            if continue_resgristrando == "s":
                 self.atualizar_usuario()
             return usuario_atualizado
         else:
@@ -114,22 +116,42 @@ class Controller_Usuario:
         oracle.connect()
 
         # Solicita o email do usuário a ser excluído
-        email = input("Email do Usuário que irá excluir: ")
+        codigo = input("Codigo do Usuário que irá excluir: ")
 
         # Verifica se o usuário existe na base de dados
-        if not self.verifica_existencia_usuario(oracle, email):
-            # Remove o usuário da tabela
-            oracle.write(f"delete from usuario where email = '{email}'")
-            # Exibe uma mensagem informando que o usuário foi removido
-            print(f"Usuário com email {email} removido com sucesso!")
-            continue_resgristrando =input("Deseja continuar excluindo os regristos? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
-                self.excluir_usuario()
-        else:
-            print(f"O email {email} não existe.")
+        if not self.verifica_existencia_usuario(oracle, codigo):
+            df_usuario = oracle.sqlToDataFrame(
+                f"select nome from usuario where codigo_usuario = {codigo}")
 
-    def verifica_existencia_usuario(self, oracle: OracleQueries, email: str = None) -> bool:
+            nome = input(
+                f"você deseja excluir o  usuário? {df_usuario.nome.values[0]}:  S - Sim / N - não ")
+            if nome == "s":
+                if self.verifica_existencia_relacionamendo_com_usuario(oracle, codigo):
+
+                    # Remove o usuário da tabela
+                    oracle.write(
+                        f"delete from usuario where codigo_usuario = '{codigo}'")
+                    # Exibe uma mensagem informando que o usuário foi removido
+                    print(f"Usuário com codigo {codigo} removido com sucesso!")
+                    continue_resgristrando = input(
+                        "Deseja continuar excluindo os regristos? s /SIM - n /NÃO: ")
+                    if continue_resgristrando == "s":
+                        self.excluir_usuario()
+                else:
+                    print(
+                        "Usuário Não pede ser apgado porque esta relaciondo com outra tabela")
+
+        else:
+            print(f"O usuario com codigo {codigo} não existe.")
+
+    def verifica_existencia_usuario(self, oracle: OracleQueries, codigo: str = None) -> bool:
         # Recupera os dados do usuário criado transformando em um DataFrame
         df_usuario = oracle.sqlToDataFrame(
-            f"select email, nome from usuario where email = '{email}'")
+            f"select email, nome from usuario where codigo_usuario = '{codigo}'")
         return df_usuario.empty
+
+    def verifica_existencia_relacionamendo_com_usuario(self, oracle: OracleQueries, codigo: int = None) -> bool:
+        # Recupera os dados do novo usuario criado transformando em um DataFrame
+        df_perfil = oracle.sqlToDataFrame(
+            f"SELECT qtd_indicada, qtd_consumida FROM agenda WHERE codigo_usuario = {codigo}")
+        return df_perfil.empty

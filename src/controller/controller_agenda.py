@@ -15,7 +15,7 @@ class Controller_Agenda:
         oracle = OracleQueries(can_write=True)
         oracle.connect()
         relatorio = Relatorio()
-        
+
         relatorio.get_relatorio_usuario()
         # Solicita o novo email
         codigo = input("entre com codigo do usuario: ")
@@ -27,13 +27,14 @@ class Controller_Agenda:
             # Insere e persiste o novo usuário
             oracle.write(
                 f"insert into agenda values (AGENDA_CODIGO_SEQ.NEXTVAL,{agenda.get_quantidade_indicada()},{agenda.get_quantidade_consumida()}, {agenda.get_quantidade_consumida_total()}, {agenda.get_data_cadastro()}, {agenda.get_codigo_usuario()})")
-           
-            id = oracle.sqlToDataFrame(f"select max(codigo_agenda)as id from agenda").id.values[0]
-           
+
+            id = oracle.sqlToDataFrame(
+                f"select max(codigo_agenda)as id from agenda").id.values[0]
+
             # Recupera os dados do novo usuário criado transformando em um DataFrame
             df_agenda = oracle.sqlToDataFrame(
                 f"SELECT QTD_INDICADA, QTD_CONSUMIDA, QTD_TOTAL,DATA_CADASTRO, CODIGO_USUARIO FROM AGENDA WHERE CODIGO_AGENDA ={id}")
-           
+
             # Cria um novo objeto Usuario
             nova_agenda = Agenda(
                 df_agenda.qtd_indicada.values[0],
@@ -46,19 +47,20 @@ class Controller_Agenda:
             # Exibe os atributos do novo usuário
             print(nova_agenda.to_string())
 
-            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando == "s":
                 self.inserir_agenda()
 
-            #Retorna o objeto novo_usuario para utilização posterior, caso necessário
-            return  nova_agenda
+            # Retorna o objeto novo_usuario para utilização posterior, caso necessário
+            return nova_agenda
         else:
             print(f"O usuario não completou quantidade água indicada")
-         
+
             return None
 
     def atualizar_agenda(self) -> Usuario:
-        
+
         print(" EM DESEVOLVIMENTO... ")
         sleep(3)
         return None
@@ -104,9 +106,9 @@ class Controller_Agenda:
             print(usuario_atualizado.to_string())
             # Retorna o objeto usuario_atualizado para utilização posterior, caso necessário
 
-          
-            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando == "s":
                 self.atualizar_agenda()
 
             return usuario_atualizado
@@ -124,14 +126,22 @@ class Controller_Agenda:
 
         # Verifica se o usuário existe na base de dados
         if not self.verifica_agendamento_banco(oracle, id):
-            # Remove o usuário da tabela
-            oracle.write(f"delete from agenda where codigo_agenda = {id}")
-            # Exibe uma mensagem informando que o usuário foi removido
-            print(f"Agendamento do código {id} removido com sucesso!")
 
-            continue_resgristrando =input("Deseja continuar ecluindo os regristos? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
-                self.excluir_agenda()
+            df_agenda = oracle.sqlToDataFrame(
+                f"select codigo_agenda from agenda where codigo_agenda = {id}")
+            nome = input(
+                f"você deseja excluir  agenda mendo do codigo? {df_agenda.codigo_agenda.values[0]}:  S - Sim / N - não ")
+
+            if nome == "s":
+                # Remove o usuário da tabela
+                oracle.write(f"delete from agenda where codigo_agenda = {id}")
+                # Exibe uma mensagem informando que o usuário foi removido
+                print(f"Agendamento do código {id} removido com sucesso!")
+
+                continue_resgristrando = input(
+                    "Deseja continuar ecluindo os regristos? s /SIM - n /NÃO: ")
+                if continue_resgristrando == "s":
+                    self.excluir_agenda()
         else:
             print(f"O agendamentop do código {id} não existe.")
 
@@ -140,7 +150,6 @@ class Controller_Agenda:
         df_agenda = oracle.sqlToDataFrame(
             f"select * from agenda WHERE (QTD_CONSUMIDA < QTD_INDICADA ) AND CODIGO_USUARIO   = '{codigo}'")
         return df_agenda.empty
-
 
     def verifica_agendamento_banco(self, oracle: OracleQueries, codigo: str = None) -> bool:
         # Recupera os dados do agenda criado transformando em um DataFrame
@@ -154,15 +163,15 @@ class Controller_Agenda:
         ml_agua_dia = float(350)
         df_agenda = oracle.sqlToDataFrame(
             f" select c.CODIGO_USUARIO, c.NOME, c.EMAIL, c.IDADE_USUARIO, c.ALTURA_USUARIO, c.PESO_USUARIO,c.codigo_perfil, p.DESCRICAO_PERFIL as PERFIL, p.PORCENTAGEM_PERFIL as PORCENTAGEM from usuario c JOIN PERFILS p ON(c.CODIGO_PERFIL =p.CODIGO_PERFIL) where c.CODIGO_USUARIO =  '{id_usuario}'")
-       
-       
 
-        qauntidade_agua_indicada = int(float(df_agenda.peso_usuario.values[0] * ml_agua_kilo) * float(df_agenda.porcentagem.values[0])) / 1000
-       
+        qauntidade_agua_indicada = int(float(
+            df_agenda.peso_usuario.values[0] * ml_agua_kilo) * float(df_agenda.porcentagem.values[0])) / 1000
+
         tempo = str(input(
             "Entre com intervalo de tempo que gostaria de receber os aviso entre com Horas e Minutos Ex:[1:30]: "))
-        
-        segundos = float(float(tempo.split(":")[0]) * 60*60 + float(tempo.split(":")[1]) * 60)
+
+        segundos = float(
+            float(tempo.split(":")[0]) * 60*60 + float(tempo.split(":")[1]) * 60)
         qauntidade_consumida = str(
             input("Entre com quantidade de água cunsumida em Ml: "))
         agenda = Agenda(qauntidade_agua_indicada, qauntidade_consumida,

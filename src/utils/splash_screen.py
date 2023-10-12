@@ -18,19 +18,6 @@ class SplashScreen:
         self.disciplina = "Banco de Dados"
         self.semestre = "2023/2"
 
-    def get_total_produtos(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_produtos)["total_produtos"].values[0]
-
-    def get_total_clientes(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_clientes)["total_clientes"].values[0]
     
     def get_total_usuarios(self):
         # Cria uma nova conexão com o banco que permite alteração
@@ -52,27 +39,6 @@ class SplashScreen:
         oracle.connect()
         # Retorna o total de registros computado pela query
         return oracle.sqlToDataFrame(self.qry_total_agenda)["total_agenda"].values[0]
-
-    def get_total_fornecedores(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_fornecedores)["total_fornecedores"].values[0]
-
-    def get_total_pedidos(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_pedidos)["total_pedidos"].values[0]
-
-    def get_total_itens_pedidos(self):
-        # Cria uma nova conexão com o banco que permite alteração
-        oracle = OracleQueries()
-        oracle.connect()
-        # Retorna o total de registros computado pela query
-        return oracle.sqlToDataFrame(self.qry_total_itens_pedido)["total_itens_pedido"].values[0]
 
     def get_updated_screen(self):
         return f"""

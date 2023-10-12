@@ -31,8 +31,9 @@ class Controller_Perfil:
             # Exibe os atributos do novo perfil
             print(novo_perfil.to_string())
             # Retorna o objeto novo_perfil para utilização posterior, caso necessário
-            continue_resgristrando =input("Deseja continuar regristrando? s /SIM - n /NÃo: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar regristrando? s /SIM - n /NÃo: ")
+            if continue_resgristrando == "s":
                 self.inserir_perfil()
 
             return novo_perfil
@@ -51,7 +52,8 @@ class Controller_Perfil:
 
         # Verifica se o perfil existe na base de dados
         if not self.verifica_existencia_perfil(oracle, nome):
-            novo_nome = str(input("Nome do Novo perfil que deseja alterar o nome: "))
+            novo_nome = str(
+                input("Nome do Novo perfil que deseja alterar o nome: "))
             porcentagem = float(input("Porcetagem (Atuallizar): "))
             # Atualiza o nome do perfil existente
             oracle.write(
@@ -61,13 +63,14 @@ class Controller_Perfil:
                 f"select descricao_perfil, porcentagem_perfil from perfils where descricao_perfil = '{novo_nome}'")
             # Cria um novo objeto perfil
             perfil_atualizado = Perfil(
-               df_perfil.porcentagem_perfil.values[0], df_perfil.descricao_perfil.values[0])
+                df_perfil.porcentagem_perfil.values[0], df_perfil.descricao_perfil.values[0])
             # Exibe os atributos do novo perfil
             print(perfil_atualizado.to_string())
             # Retorna o objeto perfil_atualizado para utilização posterior, caso necessário
 
-            continue_resgristrando =input("Deseja continuar atualizando regristrando? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
+            continue_resgristrando = input(
+                "Deseja continuar atualizando regristrando? s /SIM - n /NÃO: ")
+            if continue_resgristrando == "s":
                 self.atualizar_perfil()
 
             return perfil_atualizado
@@ -81,32 +84,47 @@ class Controller_Perfil:
         oracle.connect()
 
         # Solicita ao usuário o porcentagem do perfil a ser alterado
-        nome = str(input(" Nome do perfil que irá excluir: "))
+        codigo = str(input(" codgio do perfil que irá excluir: "))
 
         # Verifica se o perfil existe na base de dados
-        if not self.verifica_existencia_perfil(oracle, nome):
+        if not self.verifica_existencia_perfil(oracle, codigo):
             # Recupera os dados do novo perfil criado transformando em um DataFrame
             df_perfil = oracle.sqlToDataFrame(
-                f"select descricao_perfil, porcentagem_perfil from perfils where descricao_perfil = '{nome}'")
-            # Revome o perfil da tabela
-            oracle.write(
-                f"delete from perfils where descricao_perfil  = '{nome}'")
-            # Cria um novo objeto perfil para informar que foi removido
-            perfil_excluido = Perfil(
-               df_perfil.porcentagem_perfil.values[0], df_perfil.descricao_perfil.values[0])
-            # Exibe os atributos do perfil excluído
-            print("perfil Removido com Sucesso!")
-            print(perfil_excluido.to_string())
+                f"select descricao_perfil, porcentagem_perfil from perfils where codigo_perfil = {codigo}")
+            nome = input(
+                f"você deseja excluir o perfil? {df_perfil.descricao_perfil.values[0]}:  S - Sim / N - não ")
+            if nome == "s":
 
-            continue_resgristrando =input("Deseja continuar removendo ? s /SIM - n /NÃO: ")
-            if continue_resgristrando =="s":
-                self.excluir_perfil()
+                if self.verifica_existencia_relacionamendo_com_perfil(oracle, codigo):
+                    # Revome o perfil da tabela
+                    oracle.write(
+                        f"delete from perfils where codigo_perfil  = '{codigo}'")
+                    # Cria um novo objeto perfil para informar que foi removido
+                    perfil_excluido = Perfil(
+                        df_perfil.porcentagem_perfil.values[0], df_perfil.descricao_perfil.values[0])
+                    # Exibe os atributos do perfil excluído
+                    print("perfil Removido com Sucesso!")
+                    print(perfil_excluido.to_string())
+
+                    continue_resgristrando = input(
+                        "Deseja continuar removendo ? s /SIM - n /NÃO: ")
+                    if continue_resgristrando == "s":
+                        self.excluir_perfil()
+                else:
+                    print(
+                        "Não pede ser apagado porque esta relaciondo com outra tabela")
 
         else:
-            print(f"O Perfil {nome} não existe.")
+            print(f"O Perfil {codigo} não existe.")
 
-    def verifica_existencia_perfil(self, oracle: OracleQueries, nome: str = None) -> bool:
+    def verifica_existencia_perfil(self, oracle: OracleQueries, codigo: int = None) -> bool:
         # Recupera os dados do novo perfil criado transformando em um DataFrame
         df_perfil = oracle.sqlToDataFrame(
-            f"select descricao_perfil, porcentagem_perfil from perfils where descricao_perfil = '{nome}'")
+            f"select descricao_perfil, porcentagem_perfil from perfils where codigo_perfil = '{codigo}'")
+        return df_perfil.empty
+
+    def verifica_existencia_relacionamendo_com_perfil(self, oracle: OracleQueries, codigo: int = None) -> bool:
+        # Recupera os dados do novo perfil criado transformando em um DataFrame
+        df_perfil = oracle.sqlToDataFrame(
+            f"SELECT nome, email FROM usuario WHERE codigo_perfil = {codigo}")
         return df_perfil.empty

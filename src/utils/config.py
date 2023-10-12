@@ -8,8 +8,9 @@ MENU_PRINCIPAL = """Menu Principal
 
 MENU_RELATORIOS = """Relatórios
 1 - Relatório de Usuario
-2 - Relatório de Perfil
-3 - Relatório de Agenda
+2 - Relatório de quantidade de Perfil por Usuario
+3 - Relatório de Perfil
+4 - Relatório de Agenda
 0 - Sair
 """
 

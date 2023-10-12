@@ -18,8 +18,10 @@ def reports(opcao_relatorio: int = 0):
     if opcao_relatorio == 1:
         relatorio.get_relatorio_usuario()
     elif opcao_relatorio == 2:
-        relatorio.get_relatorio_perfil()
+        relatorio.get_relatorio_perfil_usuario()
     elif opcao_relatorio == 3:
+        relatorio.get_relatorio_perfil()
+    elif opcao_relatorio == 4:
         relatorio.get_relatorio_agenda()
 
 
