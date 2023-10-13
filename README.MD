@@ -2,6 +2,11 @@
 
 O Aplicativo de Monitoramento de Hidratação é uma ferramenta projetada para ajudar os usuários a acompanhar e atender às suas necessidades diárias de consumo de água de forma personalizada.
 
+---
+### Vídeo Explicativo
+[![video do trabalho C2 ](imagens/telavideo.png)](https://youtu.be/e1tuvCcRLeU)
+
+---
 ### Como Funciona
 
 1. **Perfil do Usuário**: Ao iniciar o aplicativo, você será solicitado a fornecer informações básicas, como peso, altura e idade. Com base nessas informações, o aplicativo calculará a quantidade ideal de água que você deve ingerir diariamente.
